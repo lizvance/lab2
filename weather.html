@@ -1,0 +1,127 @@
+<!DOCTYPE>
+<html>
+<head>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300|Sansita" rel="stylesheet">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="./main.css" rel="stylesheet" />
+  <title>City Finder</title>
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+
+</head>
+<body>
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+          <a class="navbar-brand" href="#page-top">WEATHER and STACK</a>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <div id="weatherMan" class="col-sm-6">
+      <form>
+        <h1 class="command">Enter A Utah City: </h1><input type="text" class="box" id="cityField" value=""><br>
+        <h3 class="command">Suggestion: </h3><span id="txtHint">Empty</span>
+        <input id="weatherButton" type="submit" value="Submit">
+      </form>
+      <p>City</p>
+        <textarea class="box" id="displayCity">No City</textarea>
+        <p>Current Weather</p>
+          <div id="weather">No weather</div>
+          <div id="terms">***Thanks to WeatherUnderground***</div>
+    </div>
+    <div id="stack" class="col-sm-6">
+      <form>
+        <h1 class="command">Search Stack Exchange: </h1><input type="text" class="box" id="searchStack" value=""><br>
+        <input id="searchButton" type="submit" value="Search">
+      </form>
+      <p>Search Results</p>
+        <ul id="searchResults"> </ul>
+    </div>
+
+  </div>
+
+
+</body>
+</html>
+
+<script>
+$(document).ready(function() {
+$( "#cityField" ).keyup(function() {
+    var url = "http://bioresearch.byu.edu/cs260/jquery/getcity.cgi?q="+$("#cityField").val()
+    $.getJSON(url, function(data) {
+    var  everything = "<ul>";
+    $.each(data, function(i,item) {
+      everything += "<li> "+data[i].city;
+    });
+    everything += "</ul>";
+    $("#txtHint").html(everything);
+  })
+  .done(function() { console.log('getJSON request succeeded!'); })
+  .fail(function(jqXHR, textStatus, errorThrown) {
+    console.log('getJSON request failed! ' + textStatus);
+    console.log("incoming "+jqXHR.responseText);
+  })
+  .always(function() { console.log('getJSON request ended!');
+  })
+  .complete(function() { console.log("complete"); });
+});
+$("#weatherButton").click(function(e){
+  var value = $("#cityField").val();
+  console.log(value);
+  e.preventDefault();
+  $("#displayCity").text(value);
+
+  var myurl= "https://api.wunderground.com/api/8e851d86a48dab84/geolookup/conditions/q/UT/";
+  myurl += value;
+  myurl += ".json";
+  console.log(myurl);
+  $.ajax({
+    url : myurl,
+    dataType : "json",
+    success : function(parsed_json) {
+      var location = parsed_json['location']['city'];
+      var temp_string = parsed_json['current_observation']['temperature_string'];
+      var current_weather = parsed_json['current_observation']['weather'];
+      everything = "<ul>";
+      everything += "<li>Location: "+location;
+      everything += "<li>Temperature: "+temp_string;
+      everything += "<li>Weather: "+current_weather;
+      everything += "</ul>";
+      $("#weather").html(everything);
+    }
+});
+});
+
+
+$("#searchButton").click(function(e){
+  e.preventDefault();
+  var searchHere = $("#searchStack").val();
+  var myURL = "https://api.stackexchange.com/2.2/search?order=desc&sort=activity&intitle=" + searchHere + "&site=stackoverflow";
+  console.log(myURL);
+
+  $.getJSON(myURL, function(data){
+    console.log(data);
+    $("#searchResults").empty();
+    for(item of data.items){
+      var suggest=$('<li><a href="' + item.link + '">' + item.title + '</a></li>');
+      $("#searchResults").append(suggest);
+    };
+    })
+    .done(function() { console.log('getJSON request succeeded!'); })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+      console.log('getJSON request failed! ' + textStatus);
+      console.log("incoming "+jqXHR.responseText);
+      console.log("error: " + errorThrown);
+    })
+    .always(function() { console.log('getJSON request ended!');
+    })
+    .complete(function() { console.log("complete"); });
+
+  });
+
+
+});
+
+</script>

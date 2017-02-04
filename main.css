@@ -1,0 +1,36 @@
+.command{
+  font-family: 'Sansita', sans-serif;
+  font-size: 40px;
+}
+.navbar-brand{
+  font-family: 'Sansita', sans-serif;
+  font-size: 40px;
+}
+
+head, body{
+  font-family: 'Open Sans Condensed', sans-serif;
+  font-size: 20px;
+  background-color: #D9D9E0;
+}
+.box{
+  border-color: grey;
+  border-style: solid;
+}
+
+
+#weatherMan{
+  border-color: grey;
+  border-width: medium;
+  border-style: ridge;
+  background-color: #B7D1BC;
+  height: 900px
+
+}
+#stack{
+  border-color: grey;
+  border-width: medium;
+  border-style: ridge;
+  background-color: #BAACCC;
+  height: 900px;
+}
+}
